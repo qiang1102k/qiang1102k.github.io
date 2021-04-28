@@ -1,0 +1,31 @@
+encoding: utf-8
+
+# SEO相关信息
+title: FFQ Blog
+description: FFQ的个人博客
+keywords: FFQ,Blog,Java,Html,JavaScript
+author: FFQ
+footerText: ''
+
+# 这些不要动
+permalink: /posts/:year/:month/:day/:title.html
+kramdown:
+  auto_ids: true
+  input: GFM
+  syntax_highlighter: rouge
+exclude: ['CNAME', 'README.md', 'LICENSE', '_site', 'dist', 'Gemfile', 'Gemfile.lock', 'blog.sh']
+
+# 域名配置
+# baseurl配置,如果网站部署在根目录下的其他目录中，请设置为 /目录名
+domainUrl: 'http://ffqiang.cn'
+baseurl: ''
+
+# 菜单
+menu:
+  - title: 首页
+    url: /
+  - title: 归类
+    url: /pages/categories.html
+  - title: 关于
+    url: /pages/about.html
+  
