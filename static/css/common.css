@@ -16,12 +16,12 @@ html {
   -moz-osx-font-smoothing: grayscale;
   transition: all 500ms ease;
   font-family: Consolas, 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+  cursor: url('../img/hj1.cur'), auto;
 }
 body {
   max-width: 680px;
   padding: 0 14px;
-  margin: 0 auto;
-}
+  margin: 0 auto;}
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -45,6 +45,9 @@ blockquote {
 a {
   color: inherit;
   text-decoration: none;
+}
+a:hover {
+  cursor: url('../img/hj2.cur'), auto;
 }
 input,
 select,
