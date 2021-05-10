@@ -5,7 +5,6 @@ title: FFQ Blog
 description: FFQ的个人博客
 keywords: FFQ,Blog,Java,Html,JavaScript
 author: FFQ
-footerText: ''
 
 # 这些不要动
 permalink: /posts/:year/:month/:day/:title.html
