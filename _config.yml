@@ -27,7 +27,3 @@ menu:
     url: /pages/categories.html
   - title: 关于
     url: /pages/about.html
-
-# cnzz统计，不需要请设置为false
-# _includes/ext-adsense.html 里面修改为自己的配置
-extCNZZ: true
