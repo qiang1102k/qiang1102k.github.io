@@ -4,7 +4,7 @@ title: Linux安装配置Oracle
 categories: [Linux,Oracle]
 ---
 ### 1、oracle数据库下载地址
-```
+```shell
 Oracle Database 11g Release 2 (11.2.0.1.0) for Linux x86-64
 
 http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_database_1of2.zip
@@ -13,35 +13,35 @@ http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_database_2of2.
 ```
 
 ### 2、解压
-```
+```shell
 unzip linux.x64_11gR2_database_1of2.zip
 unzip linux.x64_11gR2_database_2of2.zip
 ```
 
 ### 3、关闭selinux
-```
+```shell
 vim /etc/selinux/config
-```
-查看状态
-```
+
+# 查看状态
+
 setenforce 0
 ```
 ![img_1.png](img_1.png)
 
 ### 4、关闭防火墙
-```
+```shell
 systemctl restart firewalld.service
 systemctl list-unit-files|grep firewalld.service
 systemctl disable firewalld.service
 ```
 
 ### 5、安装Oracle 11g依赖包
-```
+```shell
 yum install gcc make binutils gcc-c++ compat-libstdc++-33elfutils-libelf-devel elfutils-libelf-devel-static ksh libaio libaio-develnumactl-devel sysstat unixODBC unixODBC-devel pcre-devel -y
 ```
 
 ### 6、添加安装用户和用户组
-```
+```shell
 groupadd oinstall
 groupadd dba
 useradd -g oinstall -G dba oracle
@@ -49,11 +49,13 @@ passwd oracle
 ```
 
 ### 7、修改内核参数配置文件
-```
+```shell
 vi /etc/sysctl.conf
 ```
+
 添加以下内容
-```
+
+```shell
 # oracle setting
 fs.aio-max-nr = 1048576
 fs.file-max = 6815744
@@ -70,11 +72,11 @@ net.core.wmem_max = 1048576
 
 ### 8、修改用户的限制文件
 修改/etc/security/limits.conf文件：
-```
+```shell
 vi /etc/security/limits.conf
 ```
 添加以下内容
-```
+```shell
 oracle           soft    nproc           2047
 oracle           hard    nproc           16384
 oracle           soft    nofile          1024
@@ -83,22 +85,22 @@ oracle           soft    stack           10240
 ```
 
 修改/etc/pam.d/login文件：
-```
+```shell
 vi /etc/pam.d/login
 ```
 添加以下内容
-```
+```shell
 # oracle setting
 session    required     /lib64/security/pam_limits.so
 session    required     pam_limits.so
 ```
 
 修改/etc/profile文件
-```
+```shell
 vi /etc/profile
 ```
 添加以下内容
-```
+```shell
 # oracle setting
 if [ $USER = "oracle" ]; then
     if [ $SHELL = "/bin/ksh" ]; then
@@ -111,7 +113,7 @@ fi
 ```
 
 ### 9、创建安装目录和设置文件权限
-```
+```shell
 mkdir -p /data/oracle/product/11.2.0
 mkdir /data/oracle/oradata
 mkdir /data/oracle/inventory
@@ -121,12 +123,12 @@ chmod -R 775 /data/oracle
 ```
 
 ### 10、设置oracle用户环境变量
-```
+```shell
 su -l oracle
 vi .bash_profile
 ```
 添加以下内容
-```
+```shell
 ORACLE_BASE=/data/oracle
 ORACLE_HOME=$ORACLE_BASE/product/11.2.0
 ORACLE_SID=orcl
@@ -135,20 +137,20 @@ export ORACLE_BASE ORACLE_HOME ORACLE_SID PATH
 ```
 
 生效环境变量
-```
+```shell
 source .bash_profile
 ```
 
 ### 11、编辑静默安装响应文件
 复制安装文件夹response到当前oracle用户的家目录下：
-```
+```shell
 cp -R /app/database/response/ .
 cd response/
 vi db_install.rsp
 ```
 
 需要设置的选项如下：
-```
+```shell
 oracle.install.option=INSTALL_DB_SWONLY
 
 ORACLE_HOSTNAME=CentOS
@@ -183,7 +185,7 @@ cd /app/database/
 
 解决方法
 切换到root用户
-```
+```shell
 free
 dd if=/dev/zero of=swapfile bs=1024 count=500000
 mkswap swapfile
@@ -197,14 +199,14 @@ swapon swapfile
 ![img_4.png](img_4.png)
 
 按照要求执行脚本，打开终端，退出到root身份登录，执行脚本：
-```
+```shell
 sh /data/oracle/inventory/orainstRoot.sh
 sh /data/oracle/product/11.2.0/root.sh
 ```
 
 ### 13、以静默方式配置监听
 重新使用oracle用户登录
-```
+```shell
 netca /silent /responseFile /home/oracle/response/netca.rsp
 ```
 
@@ -215,11 +217,11 @@ netca /silent /responseFile /home/oracle/response/netca.rsp
 通过netstat命令可以查看1521端口正在监听
 
 ### 14、以静默方式建立新库，同时也建立一个对应的实例
-```
+```shell
 vi /home/oracle/response/dbca.rsp
 ```
 参考以下内容配置
-```
+```shell
 [GENERAL]
 
 # oracle版本，不能更改
@@ -277,31 +279,31 @@ TOTALMEMORY = "1638"
 ```
 
 进行静默配置：
-```
+```shell
 dbca -silent -responseFile /home/oracle/response/dbca.rsp
 ```
 ![img_5.png](img_5.png)
 
 建库后进行实例进程检查：
-```
+```shell
 ps -ef | grep ora_ | grep -v grep
 ```
 ![img_6.png](img_6.png)
 
 查看监听状态：
-```
+```shell
 lsnrctl status
 ```
 ![img_7.png](img_7.png)
 
 ### 15、命令行模式静默删除
 首先查看dbca的帮助信息
-```
+```shell
 dbca -help
 ```
 
 修改/home/oracle/response/dbca.rsp文件里以下几个参数，下面三个参数根据建库实际情况进行修改：
-```
+```shell
 OPERATION_TYPE = "deleteDatabase"
 SOURCEDB = "orcl"
 SYSDBAUSERNAME = "sys"
@@ -309,12 +311,12 @@ SYSDBAPASSWORD = "123456"
 ```
 
 然后运行：
-```
+```shell
 dbca -silent -responseFile /home/oracle/response/dbca.rsp
 ```
 
 各参数含义如下:
-```
+```shell
 -silent 表示以静默方式删除
 -responseFile 表示使用哪个响应文件,必需使用绝对路径
 RESPONSEFILE_VERSION 响应文件模板的版本,该参数不要更改
@@ -325,7 +327,7 @@ SOURCEDB 数据库名,不是全局数据库名,即不包含db_domain
 很简单数据库卸载完成了，请注意，只是数据库卸载完了，数据库软件还是在的。
 
 ### 16、使用DBCA卸载数据库
-```
+```shell
 dbca -silent -delete Database -responseFile dbca.rsp
 a.选项-silent表示静默安装，免安装交互，大部分安装信息也不输出
 b.选项-responseFile指定应答文件，要求用绝对路径
