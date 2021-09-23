@@ -95,7 +95,7 @@ session    required     /lib64/security/pam_limits.so
 session    required     pam_limits.so
 ```
 
-修改/etc/profile文件
+修改/etc/profile文件:
 ```shell
 vi /etc/profile
 ```
